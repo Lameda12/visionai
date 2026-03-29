@@ -479,6 +479,223 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+  /* ── Live Demo section ───────────────────────────────── */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .demo-section {
+    margin-bottom: 48px;
+    animation: fadeDown 0.5s 0.16s ease both;
+  }
+
+  .demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 720px) { .demo-grid { grid-template-columns: 1fr; } }
+
+  .demo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .demo-card:hover { border-color: var(--border-active); }
+
+  .demo-img-wrap {
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    height: 200px;
+  }
+  .demo-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    opacity: 0.88;
+    transition: opacity 0.3s;
+  }
+  .demo-card:hover .demo-img-wrap img { opacity: 1; }
+
+  .demo-img-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(8,11,15,0.82);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent2);
+    padding: 4px 9px;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+  }
+
+  .demo-body { padding: 18px 20px 20px; }
+
+  .demo-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+  }
+
+  .demo-meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .demo-meta span { color: var(--accent); }
+
+  .det-list { display: flex; flex-direction: column; gap: 7px; }
+
+  .det-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .det-label {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text);
+    min-width: 96px;
+  }
+
+  .det-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .det-bar { height: 100%; background: var(--accent); border-radius: 99px; }
+
+  .det-conf {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    min-width: 34px;
+    text-align: right;
+  }
+
+  .face-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .face-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 20px;
+  }
+
+  .face-attr {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .face-attr strong { color: var(--text); font-weight: 400; }
+  .face-attr .emo  { color: var(--accent2); }
+  .face-attr .conf { color: var(--accent); }
+
+  /* ── Try the API section ─────────────────────────────── */
+  .try-api {
+    margin: 48px 0 56px;
+    animation: fadeDown 0.5s 0.2s ease both;
+  }
+
+  .try-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 720px) { .try-grid { grid-template-columns: 1fr; } }
+
+  .try-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+  }
+
+  .try-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+
+  .try-card p {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 13px 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 10px;
+  }
+  .code-block .cmd  { color: var(--accent2); }
+  .code-block .flag { color: var(--accent); }
+  .code-block .str  { color: #ff9f43; }
+  .code-block .cmt  { color: var(--text-muted); }
+
+  .endpoint-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+  .endpoint-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+  }
+  .ep-method {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .ep-post { background: rgba(45,140,255,0.15); color: var(--accent); }
+  .ep-get  { background: rgba(0,229,160,0.12);  color: var(--accent2); }
+  .ep-path { color: var(--text); }
+  .ep-desc { color: var(--text-dim); }
 </style>
 </head>
 <body>
@@ -506,6 +723,90 @@
   <div class="api-bar">
     <label>API_URL</label>
     <input type="text" id="apiUrl" value="http://localhost:8000" placeholder="http://localhost:8000" />
+  </div>
+
+  <!-- ==================== LIVE DEMO ==================== -->
+  <div class="demo-section">
+    <div class="section-label">Live Demo — sample results</div>
+    <div class="demo-grid">
+
+      <!-- Detection card -->
+      <div class="demo-card">
+        <div class="demo-img-wrap">
+          <img src="https://ultralytics.com/images/bus.jpg" alt="Bus street scene" loading="lazy" />
+          <div class="demo-img-badge">bus.jpg</div>
+        </div>
+        <div class="demo-body">
+          <div class="demo-title">Object Detection</div>
+          <div class="demo-meta">
+            <span>6 objects detected</span> &nbsp;·&nbsp; 62.5 ms &nbsp;·&nbsp; yolov8n
+          </div>
+          <div class="det-list">
+            <div class="det-row">
+              <span class="det-label">person</span>
+              <div class="det-bar-wrap"><div class="det-bar" style="width:81.9%"></div></div>
+              <span class="det-conf">0.819</span>
+            </div>
+            <div class="det-row">
+              <span class="det-label">truck</span>
+              <div class="det-bar-wrap"><div class="det-bar" style="width:91.9%"></div></div>
+              <span class="det-conf">0.919</span>
+            </div>
+            <div class="det-row">
+              <span class="det-label">train</span>
+              <div class="det-bar-wrap"><div class="det-bar" style="width:88.6%"></div></div>
+              <span class="det-conf">0.886</span>
+            </div>
+            <div class="det-row">
+              <span class="det-label">bench</span>
+              <div class="det-bar-wrap"><div class="det-bar" style="width:78.7%"></div></div>
+              <span class="det-conf">0.787</span>
+            </div>
+            <div class="det-row">
+              <span class="det-label">airplane</span>
+              <div class="det-bar-wrap"><div class="det-bar" style="width:68.9%"></div></div>
+              <span class="det-conf">0.689</span>
+            </div>
+            <div class="det-row">
+              <span class="det-label">bird</span>
+              <div class="det-bar-wrap"><div class="det-bar" style="width:56.2%"></div></div>
+              <span class="det-conf">0.562</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Face card -->
+      <div class="demo-card">
+        <div class="demo-img-wrap">
+          <img src="https://ultralytics.com/images/zidane.jpg" alt="Zidane face sample" loading="lazy" />
+          <div class="demo-img-badge">zidane.jpg</div>
+        </div>
+        <div class="demo-body">
+          <div class="demo-title">Face Analysis</div>
+          <div class="demo-meta">
+            <span>2 faces found</span> &nbsp;·&nbsp; 92.4 ms &nbsp;·&nbsp; opencv backend
+          </div>
+          <div class="face-list">
+            <div class="face-chip">
+              <div class="face-attr">emotion &nbsp;<span class="emo">neutral</span></div>
+              <div class="face-attr">confidence &nbsp;<span class="conf">93.1%</span></div>
+              <div class="face-attr">age &nbsp;<strong>~41</strong></div>
+              <div class="face-attr">gender &nbsp;<strong>Woman</strong> (81.3%)</div>
+              <div class="face-attr" style="grid-column:1/-1">race &nbsp;<strong>white</strong> (89.7%)</div>
+            </div>
+            <div class="face-chip">
+              <div class="face-attr">emotion &nbsp;<span class="emo">fear</span></div>
+              <div class="face-attr">confidence &nbsp;<span class="conf">84.9%</span></div>
+              <div class="face-attr">age &nbsp;<strong>~29</strong></div>
+              <div class="face-attr">gender &nbsp;<strong>Woman</strong> (87.6%)</div>
+              <div class="face-attr" style="grid-column:1/-1">race &nbsp;<strong>asian</strong> (51.9%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Tabs -->
@@ -649,6 +950,59 @@
       </div>
       <div class="stats-row" id="stats-motion"></div>
       <pre class="json-output" id="json-motion"></pre>
+    </div>
+  </div>
+
+  <!-- ==================== TRY THE API ==================== -->
+  <div class="try-api">
+    <div class="section-label">Try the API — localhost:8000</div>
+    <div class="try-grid">
+
+      <div class="try-card">
+        <div class="try-card-title">Start the server</div>
+        <p>Requires Python 3.10+ and the project dependencies.</p>
+        <div class="code-block"><span class="cmt"># one-command setup</span>
+<span class="cmd">make</span> <span class="flag">setup</span>
+<span class="cmd">make</span> <span class="flag">serve</span></div>
+        <div class="code-block"><span class="cmt"># or manually</span>
+<span class="cmd">pip install</span> <span class="flag">-r</span> requirements.txt
+<span class="cmd">uvicorn</span> api.server:app <span class="flag">--reload</span></div>
+        <p>Then refresh this page — the status pill top-right will turn green.</p>
+      </div>
+
+      <div class="try-card">
+        <div class="try-card-title">API endpoints</div>
+        <div class="endpoint-list">
+          <div class="endpoint-row">
+            <span class="ep-method ep-get">GET</span>
+            <span class="ep-path">/health</span>
+            <span class="ep-desc">server status</span>
+          </div>
+          <div class="endpoint-row">
+            <span class="ep-method ep-post">POST</span>
+            <span class="ep-path">/detect</span>
+            <span class="ep-desc">YOLOv8 object detection</span>
+          </div>
+          <div class="endpoint-row">
+            <span class="ep-method ep-post">POST</span>
+            <span class="ep-path">/face</span>
+            <span class="ep-desc">DeepFace analysis</span>
+          </div>
+          <div class="endpoint-row">
+            <span class="ep-method ep-post">POST</span>
+            <span class="ep-path">/motion</span>
+            <span class="ep-desc">MOG2 motion diff</span>
+          </div>
+        </div>
+        <div class="code-block" style="margin-top:16px"><span class="cmt"># test with curl</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> localhost:8000/detect \
+  <span class="flag">-F</span> <span class="str">"file=@image.jpg"</span> \
+  <span class="flag">-G</span> <span class="flag">-d</span> <span class="str">"conf=0.5"</span>
+
+<span class="cmd">curl</span> <span class="flag">-X POST</span> localhost:8000/face \
+  <span class="flag">-F</span> <span class="str">"file=@portrait.jpg"</span></div>
+      </div>
+
     </div>
   </div>
 

@@ -1,0 +1,25 @@
+detection:
+  model: yolov8n        # yolov8n / yolov8s / yolov8m / yolov8l
+  confidence: 0.5
+  iou_threshold: 0.45
+  device: cpu           # cpu / cuda / mps
+
+face:
+  backend: opencv       # opencv / ssd / dlib / mtcnn
+  enforce_detection: false
+  analyze: true         # age, gender, emotion, race
+
+motion:
+  sensitivity: medium   # low / medium / high
+  min_area: 500
+  log_events: true
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  max_image_size_mb: 10
+
+output:
+  dir: ./outputs
+  save_annotated: true
+  save_json: true

@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+outputs/demo/
+outputs/*.jpg
+outputs/*.json
+outputs/*.jsonl
+*.pt
+*.onnx
+.DS_Store
+.env

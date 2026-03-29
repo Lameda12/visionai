@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VisionAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #080b0f;
+    --surface: #0e1318;
+    --border: #1c2530;
+    --border-active: #2d8cff;
+    --accent: #2d8cff;
+    --accent2: #00e5a0;
+    --accent3: #ff4d6d;
+    --text: #e8edf3;
+    --text-dim: #5a6a7a;
+    --text-muted: #2d3a47;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --radius: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(45,140,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45,140,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Radial glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(45,140,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  header {
+    padding: 40px 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  .logo-mark {
+    width: 42px; height: 42px;
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .logo-mark::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1.5px solid var(--accent2);
+    border-radius: 4px;
+    opacity: 0.5;
+    transform: rotate(45deg);
+  }
+
+  .logo-mark svg { position: relative; z-index: 1; }
+
+  .header-text h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .header-text p {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .status-pill {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .status-pill:hover { border-color: var(--accent); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); }
+  .status-dot.online { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); animation: pulse 2s infinite; }
+
+  /* API URL bar */
+  .api-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    animation: fadeDown 0.5s 0.08s ease both;
+  }
+
+  .api-bar label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .api-bar input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 9px 14px;
+    border-radius: var(--radius);
+    outline: none;
+    transition: border-color 0.2s;
+    max-width: 320px;
+  }
+
+  .api-bar input:focus { border-color: var(--accent); }
+
+  /* Module tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4px;
+    border-radius: 8px;
+    width: fit-content;
+    animation: fadeDown 0.5s 0.12s ease both;
+  }
+
+  .tab {
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-family: var(--font-display);
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(45,140,255,0.3);
+  }
+
+  .tab:not(.active):hover { color: var(--text); background: var(--border); }
+
+  /* Panels */
+  .panel { display: none; animation: fadeUp 0.25s ease both; }
+  .panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  @media (max-width: 720px) { .panel.active { grid-template-columns: 1fr; } }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--border-active); }
+
+  .card-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  /* Drop zone */
+  .dropzone {
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dropzone.dragover {
+    border-color: var(--accent);
+    background: rgba(45,140,255,0.05);
+  }
+
+  .dropzone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dropzone-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+  .dropzone-text { font-size: 13px; color: var(--text-dim); }
+  .dropzone-text strong { color: var(--accent); }
+
+  /* Preview */
+  .preview-wrap {
+    margin-top: 14px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: none;
+    background: #000;
+    max-height: 220px;
+  }
+
+  .preview-wrap img { width: 100%; max-height: 220px; object-fit: contain; display: block; }
+
+  /* Options */
+  .options { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .option-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .option-row input[type="range"] {
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    outline: none;
+    flex: 1;
+    max-width: 120px;
+  }
+
+  .option-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(45,140,255,0.5);
+  }
+
+  .option-row select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: var(--radius);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .val-display {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* Run button */
+  .run-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 13px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .run-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .run-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(45,140,255,0.4); }
+  .run-btn:active { transform: translateY(0); }
+  .run-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Result card */
+  .result-card { display: flex; flex-direction: column; gap: 16px; }
+
+  .result-image-wrap {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+  }
+
+  .result-image-wrap img { width: 100%; display: block; }
+
+  .result-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 48px;
+  }
+
+  .result-placeholder svg { opacity: 0.3; }
+
+  /* JSON output */
+  .json-output {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    display: none;
+    line-height: 1.6;
+  }
+
+  .json-output.visible { display: block; }
+  .json-key { color: var(--accent); }
+  .json-str { color: var(--accent2); }
+  .json-num { color: #ff9f43; }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stat-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .stat-chip span { color: var(--accent2); font-weight: 400; }
+
+  /* Loading spinner */
+  .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+
+  /* Motion specific */
+  .dual-drop { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dual-drop .dropzone { padding: 20px 10px; }
+  .dual-drop .dropzone-text { font-size: 11px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent3);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    z-index: 1000;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.25s ease;
+    max-width: 340px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Animations */
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp   { from { opacity: 0; transform: translateY(10px);  } to { opacity: 1; transform: translateY(0); } }
+  @keyframes spin     { to { transform: rotate(360deg); } }
+  @keyframes pulse    { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="3" stroke="#2d8cff" stroke-width="1.5"/>
+        <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="#2d8cff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>VisionAI</h1>
+      <p>OpenCV · YOLOv8 · DeepFace · MOG2</p>
+    </div>
+    <button class="status-pill" id="statusPill" onclick="checkHealth()">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">checking...</span>
+    </button>
+  </header>
+
+  <!-- API URL bar -->
+  <div class="api-bar">
+    <label>API_URL</label>
+    <input type="text" id="apiUrl" value="http://localhost:8000" placeholder="http://localhost:8000" />
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('detect', this)">Detect</button>
+    <button class="tab" onclick="switchTab('face', this)">Face</button>
+    <button class="tab" onclick="switchTab('motion', this)">Motion</button>
+  </div>
+
+  <!-- ==================== DETECT ==================== -->
+  <div class="panel active" id="panel-detect">
+    <div class="card">
+      <div class="card-label">Input · Object Detection</div>
+      <div class="dropzone" id="drop-detect" ondragover="onDrag(event,this)" ondragleave="offDrag(this)" ondrop="onDrop(event,'detect')">
+        <input type="file" accept="image/*" onchange="onFile(event,'detect')" />
+        <span class="dropzone-icon">🖼</span>
+        <div class="dropzone-text">Drop image or <strong>browse</strong></div>
+      </div>
+      <div class="preview-wrap" id="preview-detect"><img id="preview-img-detect" /></div>
+      <div class="options">
+        <div class="option-row">
+          <span class="option-label">confidence</span>
+          <input type="range" min="0.1" max="0.95" step="0.05" value="0.5" id="conf-detect"
+            oninput="document.getElementById('conf-val-detect').textContent=parseFloat(this.value).toFixed(2)" />
+          <span class="val-display" id="conf-val-detect">0.50</span>
+        </div>
+        <div class="option-row">
+          <span class="option-label">return image</span>
+          <input type="checkbox" id="img-detect" checked style="accent-color:var(--accent);width:15px;height:15px;cursor:pointer;" />
+        </div>
+      </div>
+      <button class="run-btn" id="btn-detect" onclick="runDetect()">
+        <span id="btn-detect-text">Run Detection</span>
+        <div class="spinner" id="spinner-detect"></div>
+      </button>
+    </div>
+
+    <div class="card result-card">
+      <div class="card-label">Output</div>
+      <div class="result-image-wrap" id="result-img-wrap-detect">
+        <div class="result-placeholder">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M4 28l8-8 6 6 6-8 8 10" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          result appears here
+        </div>
+      </div>
+      <div class="stats-row" id="stats-detect"></div>
+      <pre class="json-output" id="json-detect"></pre>
+    </div>
+  </div>
+
+  <!-- ==================== FACE ==================== -->
+  <div class="panel" id="panel-face">
+    <div class="card">
+      <div class="card-label">Input · Face Analysis</div>
+      <div class="dropzone" id="drop-face" ondragover="onDrag(event,this)" ondragleave="offDrag(this)" ondrop="onDrop(event,'face')">
+        <input type="file" accept="image/*" onchange="onFile(event,'face')" />
+        <span class="dropzone-icon">👤</span>
+        <div class="dropzone-text">Drop image or <strong>browse</strong></div>
+      </div>
+      <div class="preview-wrap" id="preview-face"><img id="preview-img-face" /></div>
+      <div class="options">
+        <div class="option-row">
+          <span class="option-label">analyze attributes</span>
+          <input type="checkbox" id="analyze-face" checked style="accent-color:var(--accent);width:15px;height:15px;cursor:pointer;" />
+        </div>
+        <div class="option-row">
+          <span class="option-label">return image</span>
+          <input type="checkbox" id="img-face" checked style="accent-color:var(--accent);width:15px;height:15px;cursor:pointer;" />
+        </div>
+      </div>
+      <button class="run-btn" id="btn-face" onclick="runFace()">
+        <span id="btn-face-text">Analyze Faces</span>
+        <div class="spinner" id="spinner-face"></div>
+      </button>
+    </div>
+
+    <div class="card result-card">
+      <div class="card-label">Output</div>
+      <div class="result-image-wrap" id="result-img-wrap-face">
+        <div class="result-placeholder">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="16" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M6 36c0-7.732 6.268-14 14-14s14 6.268 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          result appears here
+        </div>
+      </div>
+      <div class="stats-row" id="stats-face"></div>
+      <pre class="json-output" id="json-face"></pre>
+    </div>
+  </div>
+
+  <!-- ==================== MOTION ==================== -->
+  <div class="panel" id="panel-motion">
+    <div class="card">
+      <div class="card-label">Input · Motion Detection</div>
+      <div class="dual-drop">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px;">BACKGROUND FRAME</div>
+          <div class="dropzone" id="drop-motion1" ondragover="onDrag(event,this)" ondragleave="offDrag(this)" ondrop="onDrop(event,'motion1')">
+            <input type="file" accept="image/*" onchange="onFile(event,'motion1')" />
+            <span class="dropzone-icon" style="font-size:22px;">🏞</span>
+            <div class="dropzone-text"><strong>frame 1</strong></div>
+          </div>
+          <div class="preview-wrap" id="preview-motion1" style="margin-top:8px;max-height:120px;"><img id="preview-img-motion1" style="max-height:120px;" /></div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px;">CURRENT FRAME</div>
+          <div class="dropzone" id="drop-motion2" ondragover="onDrag(event,this)" ondragleave="offDrag(this)" ondrop="onDrop(event,'motion2')">
+            <input type="file" accept="image/*" onchange="onFile(event,'motion2')" />
+            <span class="dropzone-icon" style="font-size:22px;">📷</span>
+            <div class="dropzone-text"><strong>frame 2</strong></div>
+          </div>
+          <div class="preview-wrap" id="preview-motion2" style="margin-top:8px;max-height:120px;"><img id="preview-img-motion2" style="max-height:120px;" /></div>
+        </div>
+      </div>
+      <div class="options">
+        <div class="option-row">
+          <span class="option-label">sensitivity</span>
+          <select id="sensitivity-motion">
+            <option value="low">low</option>
+            <option value="medium" selected>medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+        <div class="option-row">
+          <span class="option-label">return image</span>
+          <input type="checkbox" id="img-motion" checked style="accent-color:var(--accent);width:15px;height:15px;cursor:pointer;" />
+        </div>
+      </div>
+      <button class="run-btn" id="btn-motion" onclick="runMotion()">
+        <span id="btn-motion-text">Detect Motion</span>
+        <div class="spinner" id="spinner-motion"></div>
+      </button>
+    </div>
+
+    <div class="card result-card">
+      <div class="card-label">Output</div>
+      <div class="result-image-wrap" id="result-img-wrap-motion">
+        <div class="result-placeholder">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M8 20h4l4-8 4 16 4-10 4 6 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          result appears here
+        </div>
+      </div>
+      <div class="stats-row" id="stats-motion"></div>
+      <pre class="json-output" id="json-motion"></pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const files = {};
+
+  // -------- Tab switching --------
+  function switchTab(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // -------- Health check --------
+  async function checkHealth() {
+    const base = document.getElementById('apiUrl').value.trim();
+    const dot = document.getElementById('statusDot');
+    const txt = document.getElementById('statusText');
+    dot.className = 'status-dot';
+    txt.textContent = 'checking...';
+    try {
+      const r = await fetch(base + '/health', { signal: AbortSignal.timeout(3000) });
+      const j = await r.json();
+      dot.className = 'status-dot online';
+      txt.textContent = `v${j.version} · online`;
+    } catch {
+      dot.className = 'status-dot';
+      txt.textContent = 'offline';
+      toast('API unreachable. Is the server running?');
+    }
+  }
+
+  // -------- Drop / file handling --------
+  function onDrag(e, el) { e.preventDefault(); el.classList.add('dragover'); }
+  function offDrag(el) { el.classList.remove('dragover'); }
+
+  function onDrop(e, key) {
+    e.preventDefault();
+    offDrag(document.getElementById('drop-' + key));
+    const file = e.dataTransfer.files[0];
+    if (file) setFile(key, file);
+  }
+
+  function onFile(e, key) {
+    const file = e.target.files[0];
+    if (file) setFile(key, file);
+  }
+
+  function setFile(key, file) {
+    files[key] = file;
+    const wrap = document.getElementById('preview-' + key);
+    const img = document.getElementById('preview-img-' + key);
+    if (wrap && img) {
+      img.src = URL.createObjectURL(file);
+      wrap.style.display = 'block';
+    }
+  }
+
+  // -------- Loading state --------
+  function setLoading(id, on) {
+    const btn = document.getElementById('btn-' + id);
+    const txt = document.getElementById('btn-' + id + '-text');
+    const sp  = document.getElementById('spinner-' + id);
+    btn.disabled = on;
+    txt.style.display = on ? 'none' : 'block';
+    sp.style.display  = on ? 'block' : 'none';
+  }
+
+  // -------- Result rendering --------
+  function showResultImage(id, blob) {
+    const wrap = document.getElementById('result-img-wrap-' + id);
+    const url = URL.createObjectURL(blob);
+    wrap.innerHTML = `<img src="${url}" />`;
+  }
+
+  function showStats(id, chips) {
+    const row = document.getElementById('stats-' + id);
+    row.innerHTML = chips.map(([k, v]) =>
+      `<div class="stat-chip">${k} <span>${v}</span></div>`
+    ).join('');
+  }
+
+  function showJson(id, data) {
+    const el = document.getElementById('json-' + id);
+    el.innerHTML = syntaxHighlight(JSON.stringify(data, null, 2));
+    el.classList.add('visible');
+  }
+
+  function syntaxHighlight(json) {
+    return json
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+      .replace(/: "([^"]*)"/g, ': <span class="json-str">"$1"</span>')
+      .replace(/: (-?\d+\.?\d*)/g, ': <span class="json-num">$1</span>');
+  }
+
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3500);
+  }
+
+  // -------- API calls --------
+  function apiBase() { return document.getElementById('apiUrl').value.trim(); }
+
+  async function runDetect() {
+    if (!files['detect']) { toast('Drop an image first'); return; }
+    setLoading('detect', true);
+    const fd = new FormData();
+    fd.append('file', files['detect']);
+    const conf = document.getElementById('conf-detect').value;
+    const wantImg = document.getElementById('img-detect').checked;
+    try {
+      const url = `${apiBase()}/detect?conf=${conf}&annotated_image=${wantImg}`;
+      const r = await fetch(url, { method: 'POST', body: fd });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      if (wantImg) {
+        const blob = await r.blob();
+        showResultImage('detect', blob);
+        showStats('detect', [['image', 'annotated']]);
+      } else {
+        const j = await r.json();
+        showStats('detect', [['objects', j.count], ['conf', conf]]);
+        showJson('detect', j);
+      }
+    } catch (e) { toast('Error: ' + e.message); }
+    finally { setLoading('detect', false); }
+  }
+
+  async function runFace() {
+    if (!files['face']) { toast('Drop an image first'); return; }
+    setLoading('face', true);
+    const fd = new FormData();
+    fd.append('file', files['face']);
+    const analyze = document.getElementById('analyze-face').checked;
+    const wantImg = document.getElementById('img-face').checked;
+    try {
+      const url = `${apiBase()}/face?analyze=${analyze}&annotated_image=${wantImg}`;
+      const r = await fetch(url, { method: 'POST', body: fd });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      if (wantImg) {
+        const blob = await r.blob();
+        showResultImage('face', blob);
+        showStats('face', [['image', 'annotated']]);
+      } else {
+        const j = await r.json();
+        const chips = [['faces', j.count]];
+        if (j.faces?.[0]?.dominant_emotion) chips.push(['emotion', j.faces[0].dominant_emotion]);
+        if (j.faces?.[0]?.age) chips.push(['age', `~${Math.round(j.faces[0].age)}`]);
+        showStats('face', chips);
+        showJson('face', j);
+      }
+    } catch (e) { toast('Error: ' + e.message); }
+    finally { setLoading('face', false); }
+  }
+
+  async function runMotion() {
+    if (!files['motion1'] || !files['motion2']) { toast('Need both frames'); return; }
+    setLoading('motion', true);
+    const fd = new FormData();
+    fd.append('file1', files['motion1']);
+    fd.append('file2', files['motion2']);
+    const sens = document.getElementById('sensitivity-motion').value;
+    const wantImg = document.getElementById('img-motion').checked;
+    try {
+      const url = `${apiBase()}/motion?sensitivity=${sens}&annotated_image=${wantImg}`;
+      const r = await fetch(url, { method: 'POST', body: fd });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      if (wantImg) {
+        const blob = await r.blob();
+        showResultImage('motion', blob);
+        showStats('motion', [['sensitivity', sens]]);
+      } else {
+        const j = await r.json();
+        showStats('motion', [
+          ['motion', j.motion_detected ? '⚠ YES' : '✓ none'],
+          ['events', j.event_count],
+          ['sensitivity', sens],
+        ]);
+        showJson('motion', j);
+      }
+    } catch (e) { toast('Error: ' + e.message); }
+    finally { setLoading('motion', false); }
+  }
+
+  // Init
+  checkHealth();
+</script>
+</body>
+</html>
